@@ -9,11 +9,18 @@ const options = {
       version: "1.0.0",
       description: "Backend API Documentation for AgriPilot",
     },
+
     servers: [
       {
+        url: "https://agripilot-oltm.onrender.com",
+        description: "Production Server",
+      },
+      {
         url: "http://localhost:3000",
+        description: "Local Development Server",
       },
     ],
+
     components: {
       securitySchemes: {
         bearerAuth: {
@@ -23,6 +30,7 @@ const options = {
         },
       },
     },
+
     security: [
       {
         bearerAuth: [],
