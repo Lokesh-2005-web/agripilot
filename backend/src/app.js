@@ -8,6 +8,7 @@ app.use(express.json());
 // Import Routes
 const userRoutes = require("./routes/userRoutes");
 const cropRoutes = require("./routes/cropRoutes");
+const farmRoutes = require("./routes/farmRoutes");
 
 // Home Route
 app.get("/", (req, res) => {
@@ -20,7 +21,7 @@ app.get("/", (req, res) => {
 // API Routes
 app.use("/api/users", userRoutes);
 app.use("/api/crops", cropRoutes);
-
+app.use("/api/farms", farmRoutes);
 // 404 Handler (Keep this LAST)
 app.use((req, res) => {
     res.status(404).json({
