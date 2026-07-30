@@ -10,6 +10,7 @@ const userRoutes = require("./routes/userRoutes");
 const cropRoutes = require("./routes/cropRoutes");
 const farmRoutes = require("./routes/farmRoutes");
 const reminderRoutes = require("./routes/reminderRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
 
 // Home Route
 app.get("/", (req, res) => {
@@ -24,6 +25,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/crops", cropRoutes);
 app.use("/api/farms", farmRoutes);
 app.use("/api/reminders", reminderRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 // 404 Handler (Keep this LAST)
 app.use((req, res) => {
