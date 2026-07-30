@@ -9,6 +9,7 @@ app.use(express.json());
 const userRoutes = require("./routes/userRoutes");
 const cropRoutes = require("./routes/cropRoutes");
 const farmRoutes = require("./routes/farmRoutes");
+const reminderRoutes = require("./routes/reminderRoutes");
 
 // Home Route
 app.get("/", (req, res) => {
@@ -22,6 +23,8 @@ app.get("/", (req, res) => {
 app.use("/api/users", userRoutes);
 app.use("/api/crops", cropRoutes);
 app.use("/api/farms", farmRoutes);
+app.use("/api/reminders", reminderRoutes);
+
 // 404 Handler (Keep this LAST)
 app.use((req, res) => {
     res.status(404).json({
