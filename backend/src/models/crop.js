@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 
 const cropSchema = new mongoose.Schema(
     {
+        image: {
+            type: String,
+            default: ""
+        },
         cropName: {
             type: String,
             required: true,

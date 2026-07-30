@@ -1,22 +1,17 @@
 const Reminder = require("../models/reminder");
 
+// ==============================
 // Create Reminder
-const createReminder = async (req, res) => {
+// ==============================
+const createReminder = async (req, res, next) => {
     try {
-        const {
-            title,
-            description,
-            reminderDate,
-            completed,
-            crop,
-        } = req.body;
+        const { title, description, date, type } = req.body;
 
         const reminder = await Reminder.create({
             title,
             description,
-            reminderDate,
-            completed,
-            crop,
+            date,
+            type,
             user: req.user.id,
         });
 
@@ -26,40 +21,60 @@ const createReminder = async (req, res) => {
             reminder,
         });
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
+        next(error);
     }
 };
 
+// ==============================
 // Get All Reminders
-const getAllReminders = async (req, res) => {
+// Pagination + Search
+// ==============================
+const getAllReminders = async (req, res, next) => {
     try {
-        const reminders = await Reminder.find({
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 10;
+        const search = req.query.search || "";
+
+        const skip = (page - 1) * limit;
+
+        const query = {
             user: req.user.id,
-        }).populate("crop", "cropName variety");
+            title: {
+                $regex: search,
+                $options: "i",
+            },
+        };
+
+        const total = await Reminder.countDocuments(query);
+
+        const reminders = await Reminder.find(query)
+            .sort({ date: 1 })
+            .skip(skip)
+            .limit(limit);
 
         res.status(200).json({
             success: true,
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit),
             count: reminders.length,
             reminders,
         });
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
+        next(error);
     }
 };
 
-// Get Reminder by ID
-const getReminderById = async (req, res) => {
+// ==============================
+// Get Reminder By ID
+// ==============================
+const getReminderById = async (req, res, next) => {
     try {
         const reminder = await Reminder.findOne({
             _id: req.params.id,
             user: req.user.id,
-        }).populate("crop", "cropName variety");
+        });
 
         if (!reminder) {
             return res.status(404).json({
@@ -73,15 +88,14 @@ const getReminderById = async (req, res) => {
             reminder,
         });
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
+        next(error);
     }
 };
 
+// ==============================
 // Update Reminder
-const updateReminder = async (req, res) => {
+// ==============================
+const updateReminder = async (req, res, next) => {
     try {
         const reminder = await Reminder.findOneAndUpdate(
             {
@@ -108,15 +122,14 @@ const updateReminder = async (req, res) => {
             reminder,
         });
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
+        next(error);
     }
 };
 
+// ==============================
 // Delete Reminder
-const deleteReminder = async (req, res) => {
+// ==============================
+const deleteReminder = async (req, res, next) => {
     try {
         const reminder = await Reminder.findOneAndDelete({
             _id: req.params.id,
@@ -135,10 +148,7 @@ const deleteReminder = async (req, res) => {
             message: "Reminder deleted successfully",
         });
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
+        next(error);
     }
 };
 

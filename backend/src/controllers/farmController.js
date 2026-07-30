@@ -1,24 +1,16 @@
 const Farm = require("../models/farm");
 
+// ==============================
 // Create Farm
-const createFarm = async (req, res) => {
+// ==============================
+const createFarm = async (req, res, next) => {
     try {
-        const {
-            farmName,
-            location,
-            area,
-            soilType,
-            latitude,
-            longitude,
-        } = req.body;
+        const { name, location, size } = req.body;
 
         const farm = await Farm.create({
-            farmName,
+            name,
             location,
-            area,
-            soilType,
-            latitude,
-            longitude,
+            size,
             user: req.user.id,
         });
 
@@ -28,33 +20,55 @@ const createFarm = async (req, res) => {
             farm,
         });
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
+        next(error);
     }
 };
 
+// ==============================
 // Get All Farms
-const getAllFarms = async (req, res) => {
+// Pagination + Search
+// ==============================
+const getAllFarms = async (req, res, next) => {
     try {
-        const farms = await Farm.find({ user: req.user.id });
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 10;
+        const search = req.query.search || "";
+
+        const skip = (page - 1) * limit;
+
+        const query = {
+            user: req.user.id,
+            name: {
+                $regex: search,
+                $options: "i",
+            },
+        };
+
+        const total = await Farm.countDocuments(query);
+
+        const farms = await Farm.find(query)
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
 
         res.status(200).json({
             success: true,
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit),
             count: farms.length,
             farms,
         });
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
+        next(error);
     }
 };
 
-// Get Single Farm
-const getFarmById = async (req, res) => {
+// ==============================
+// Get Farm By ID
+// ==============================
+const getFarmById = async (req, res, next) => {
     try {
         const farm = await Farm.findOne({
             _id: req.params.id,
@@ -73,15 +87,14 @@ const getFarmById = async (req, res) => {
             farm,
         });
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
+        next(error);
     }
 };
 
+// ==============================
 // Update Farm
-const updateFarm = async (req, res) => {
+// ==============================
+const updateFarm = async (req, res, next) => {
     try {
         const farm = await Farm.findOneAndUpdate(
             {
@@ -108,15 +121,14 @@ const updateFarm = async (req, res) => {
             farm,
         });
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
+        next(error);
     }
 };
 
+// ==============================
 // Delete Farm
-const deleteFarm = async (req, res) => {
+// ==============================
+const deleteFarm = async (req, res, next) => {
     try {
         const farm = await Farm.findOneAndDelete({
             _id: req.params.id,
@@ -135,10 +147,7 @@ const deleteFarm = async (req, res) => {
             message: "Farm deleted successfully",
         });
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
+        next(error);
     }
 };
 
