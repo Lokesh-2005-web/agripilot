@@ -1,0 +1,13 @@
+node_modules/
+backend/node_modules/
+
+.env
+backend/.env
+
+.DS_Store
+
+backend.zip
+backend 2.zip
+backend 3.zip
+
+backend/backend 2/
