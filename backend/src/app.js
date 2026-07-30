@@ -11,6 +11,7 @@ const cropRoutes = require("./routes/cropRoutes");
 const farmRoutes = require("./routes/farmRoutes");
 const reminderRoutes = require("./routes/reminderRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+const weatherRoutes = require("./routes/weatherRoutes");
 
 // Home Route
 app.get("/", (req, res) => {
@@ -19,13 +20,21 @@ app.get("/", (req, res) => {
         message: "Welcome to AgriPilot Backend 🚜",
     });
 });
-
+console.log({
+    userRoutes,
+    cropRoutes,
+    farmRoutes,
+    reminderRoutes,
+    dashboardRoutes,
+    weatherRoutes,
+});
 // API Routes
 app.use("/api/users", userRoutes);
 app.use("/api/crops", cropRoutes);
 app.use("/api/farms", farmRoutes);
 app.use("/api/reminders", reminderRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/weather", weatherRoutes);
 
 // 404 Handler (Keep this LAST)
 app.use((req, res) => {
