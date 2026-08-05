@@ -12,6 +12,9 @@ function Farms() {
     location: "",
     area: "",
     soilType: "Loamy",
+    borewellDepth: "",
+    waterLevel: "",
+    motorStatus: "Healthy",
     latitude: "",
     longitude: "",
   });
@@ -47,7 +50,6 @@ function Farms() {
     setAdding(true);
 
     try {
-      // Convert location to latitude & longitude
       const geo = await fetch(
         `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(
           form.location
@@ -69,6 +71,9 @@ function Farms() {
         location: form.location,
         area: Number(form.area),
         soilType: form.soilType,
+        borewellDepth: Number(form.borewellDepth),
+        waterLevel: Number(form.waterLevel),
+        motorStatus: form.motorStatus,
         latitude,
         longitude,
       });
@@ -80,6 +85,9 @@ function Farms() {
         location: "",
         area: "",
         soilType: "Loamy",
+        borewellDepth: "",
+        waterLevel: "",
+        motorStatus: "Healthy",
         latitude: "",
         longitude: "",
       });
@@ -113,11 +121,10 @@ function Farms() {
       </div>
     );
   }
-
   return (
     <>
       <h1 className="text-4xl font-bold mb-6">🌾 Farms</h1>
-
+  
       <form
         onSubmit={addFarm}
         className="bg-white rounded-xl shadow p-6 mb-8 space-y-4"
@@ -130,7 +137,7 @@ function Farms() {
           className="border p-3 w-full rounded"
           required
         />
-
+  
         <input
           name="location"
           placeholder="Location (e.g. Hyderabad, Telangana)"
@@ -139,7 +146,7 @@ function Farms() {
           className="border p-3 w-full rounded"
           required
         />
-
+  
         <input
           name="area"
           type="number"
@@ -149,7 +156,7 @@ function Farms() {
           className="border p-3 w-full rounded"
           required
         />
-
+  
         <select
           name="soilType"
           value={form.soilType}
@@ -163,7 +170,43 @@ function Farms() {
           <option value="Peaty">Peaty</option>
           <option value="Chalky">Chalky</option>
         </select>
-
+  
+        {/* ================= Borewell Details ================= */}
+  
+        <h2 className="text-xl font-bold text-green-700 pt-4">
+          🌊 Borewell Details
+        </h2>
+  
+        <input
+          name="borewellDepth"
+          type="number"
+          placeholder="Borewell Depth (ft)"
+          value={form.borewellDepth}
+          onChange={handleChange}
+          className="border p-3 w-full rounded"
+        />
+  
+        <input
+          name="waterLevel"
+          type="number"
+          placeholder="Current Water Level (ft)"
+          value={form.waterLevel}
+          onChange={handleChange}
+          className="border p-3 w-full rounded"
+        />
+  
+        <select
+          name="motorStatus"
+          value={form.motorStatus}
+          onChange={handleChange}
+          className="border p-3 w-full rounded"
+        >
+          <option value="Healthy">Healthy</option>
+          <option value="Running">Running</option>
+          <option value="Needs Service">Needs Service</option>
+          <option value="Stopped">Stopped</option>
+        </select>
+  
         <button
           type="submit"
           disabled={adding}
@@ -172,7 +215,7 @@ function Farms() {
           {adding ? "Adding..." : "Add Farm"}
         </button>
       </form>
-
+  
       {farms.length === 0 ? (
         <div className="bg-white rounded-xl shadow p-8 text-center text-gray-500">
           No farms added yet.
@@ -184,26 +227,47 @@ function Farms() {
               key={farm._id}
               className="bg-white rounded-xl shadow p-6"
             >
-              <h2 className="text-2xl font-bold mb-2">
+              <h2 className="text-2xl font-bold mb-3">
                 {farm.farmName}
               </h2>
-
+  
               <p>📍 {farm.location}</p>
-
               <p>🌾 {farm.area} Acres</p>
-
               <p>🪴 {farm.soilType}</p>
-
+  
+              <hr className="my-3" />
+  
+              <h3 className="font-bold text-cyan-700 mb-2">
+                🌊 Borewell
+              </h3>
+  
+              <p>
+                <strong>Depth:</strong>{" "}
+                {farm.borewellDepth || 0} ft
+              </p>
+  
+              <p>
+                <strong>Water Level:</strong>{" "}
+                {farm.waterLevel || 0} ft
+              </p>
+  
+              <p>
+                <strong>Motor:</strong>{" "}
+                {farm.motorStatus || "Healthy"}
+              </p>
+  
               {farm.latitude && farm.longitude && (
                 <>
+                  <hr className="my-3" />
+  
                   <p>🌍 Latitude: {farm.latitude}</p>
                   <p>🌎 Longitude: {farm.longitude}</p>
                 </>
               )}
-
+  
               <button
                 onClick={() => deleteFarm(farm._id)}
-                className="mt-4 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+                className="mt-5 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
               >
                 Delete
               </button>
@@ -213,6 +277,6 @@ function Farms() {
       )}
     </>
   );
-}
-
-export default Farms;
+  }
+  
+  export default Farms;

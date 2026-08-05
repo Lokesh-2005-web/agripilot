@@ -3,47 +3,61 @@ const Farm = require("../models/farm");
 const Reminder = require("../models/reminder");
 
 const getDashboard = async (req, res) => {
-    try {
-        const totalCrops = await Crop.countDocuments({
-            user: req.user.id,
-        });
+  try {
+    const totalCrops = await Crop.countDocuments({
+      user: req.user.id,
+    });
 
-        const totalFarms = await Farm.countDocuments({
-            user: req.user.id,
-        });
+    const totalFarms = await Farm.countDocuments({
+      user: req.user.id,
+    });
 
-        const totalReminders = await Reminder.countDocuments({
-            user: req.user.id,
-        });
+    const totalReminders = await Reminder.countDocuments({
+      user: req.user.id,
+    });
 
-        const pendingReminders = await Reminder.countDocuments({
-            user: req.user.id,
-            completed: false,
-        });
+    const pendingReminders = await Reminder.countDocuments({
+      user: req.user.id,
+      completed: false,
+    });
 
-        const completedReminders = await Reminder.countDocuments({
-            user: req.user.id,
-            completed: true,
-        });
+    const completedReminders = await Reminder.countDocuments({
+      user: req.user.id,
+      completed: true,
+    });
 
-        res.status(200).json({
-            success: true,
-            dashboard: {
-                totalCrops,
-                totalFarms,
-                totalReminders,
-                pendingReminders,
-                completedReminders,
-            },
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
-    }
+    // ===========================
+    // Get First Farm
+    // ===========================
+
+    const farm = await Farm.findOne({
+      user: req.user.id,
+    });
+
+    res.status(200).json({
+      success: true,
+      dashboard: {
+        totalCrops,
+        totalFarms,
+        totalReminders,
+        pendingReminders,
+        completedReminders,
+
+        borewell: {
+          depth: farm?.borewellDepth || 0,
+          waterLevel: farm?.waterLevel || 0,
+          motor: farm?.motorStatus || "Healthy",
+        },
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 };
 
 module.exports = {
-    getDashboard,
+  getDashboard,
 };

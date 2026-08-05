@@ -15,6 +15,14 @@ function Dashboard() {
   const [dashboard, setDashboard] = useState({
     totalFarms: 0,
     totalCrops: 0,
+    totalReminders: 0,
+    pendingReminders: 0,
+    completedReminders: 0,
+    borewell: {
+      depth: 0,
+      waterLevel: 0,
+      motor: "Healthy",
+    },
   });
 
   const [loading, setLoading] = useState(true);
@@ -31,12 +39,6 @@ function Dashboard() {
     status: "Scheduled",
     next: "Tomorrow 06:00 AM",
     waterUsed: 850,
-  };
-
-  const borewell = {
-    level: "165 ft",
-    depth: "300 ft",
-    motor: "Healthy",
   };
 
   const pump = {
@@ -64,15 +66,18 @@ function Dashboard() {
     }
   }
 
-  if (loading)
+  if (loading) {
     return (
       <div className="text-center mt-20 text-xl font-semibold">
         Loading Smart Dashboard...
       </div>
     );
+  }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+
+      {/* Header */}
 
       <div className="bg-gradient-to-r from-green-700 to-emerald-600 text-white rounded-2xl p-8 shadow-lg">
         <h1 className="text-4xl font-bold">
@@ -84,11 +89,15 @@ function Dashboard() {
         </p>
       </div>
 
+      {/* Dashboard Cards */}
+
       <div className="grid lg:grid-cols-3 gap-6">
+
+        {/* Weather */}
 
         <div className="bg-white rounded-xl shadow p-6">
           <div className="flex items-center gap-3 mb-4">
-            <FaCloudSun className="text-yellow-500 text-3xl"/>
+            <FaCloudSun className="text-yellow-500 text-3xl" />
             <h2 className="font-bold text-xl">Weather</h2>
           </div>
 
@@ -99,9 +108,11 @@ function Dashboard() {
           <p>{weather.condition}</p>
         </div>
 
+        {/* Irrigation */}
+
         <div className="bg-white rounded-xl shadow p-6">
           <div className="flex items-center gap-3 mb-4">
-            <FaTint className="text-blue-500 text-3xl"/>
+            <FaTint className="text-blue-500 text-3xl" />
             <h2 className="font-bold text-xl">Irrigation</h2>
           </div>
 
@@ -110,20 +121,32 @@ function Dashboard() {
           <p>Today's Water : {irrigation.waterUsed} L</p>
         </div>
 
+        {/* Borewell */}
+
         <div className="bg-white rounded-xl shadow p-6">
           <div className="flex items-center gap-3 mb-4">
-            <FaWater className="text-cyan-600 text-3xl"/>
+            <FaWater className="text-cyan-600 text-3xl" />
             <h2 className="font-bold text-xl">Borewell</h2>
           </div>
 
-          <p>Depth : {borewell.depth}</p>
-          <p>Water Level : {borewell.level}</p>
-          <p>Motor : {borewell.motor}</p>
+          <p>
+            <strong>Depth :</strong> {dashboard.borewell?.depth} ft
+          </p>
+
+          <p>
+            <strong>Water Level :</strong> {dashboard.borewell?.waterLevel} ft
+          </p>
+
+          <p>
+            <strong>Motor :</strong> {dashboard.borewell?.motor}
+          </p>
         </div>
+
+        {/* Pump */}
 
         <div className="bg-white rounded-xl shadow p-6">
           <div className="flex items-center gap-3 mb-4">
-            <FaBolt className="text-orange-500 text-3xl"/>
+            <FaBolt className="text-orange-500 text-3xl" />
             <h2 className="font-bold text-xl">Pump</h2>
           </div>
 
@@ -131,22 +154,33 @@ function Dashboard() {
           <p>Running Hours : {pump.hours}</p>
         </div>
 
+        {/* Soil */}
+
         <div className="bg-white rounded-xl shadow p-6">
           <div className="flex items-center gap-3 mb-4">
-            <FaSeedling className="text-green-600 text-3xl"/>
+            <FaSeedling className="text-green-600 text-3xl" />
             <h2 className="font-bold text-xl">Soil</h2>
           </div>
 
           <p>Soil Type : {soil.type}</p>
           <p>Moisture : {soil.moisture}</p>
+
+          <hr className="my-3" />
+
           <p>Total Farms : {dashboard.totalFarms}</p>
           <p>Total Crops : {dashboard.totalCrops}</p>
+          <p>Pending Reminders : {dashboard.pendingReminders}</p>
+          <p>Completed Reminders : {dashboard.completedReminders}</p>
         </div>
+
+        {/* AI Recommendation */}
 
         <div className="bg-white rounded-xl shadow p-6 border-l-8 border-green-600">
           <div className="flex items-center gap-3 mb-4">
-            <FaRobot className="text-green-700 text-3xl"/>
-            <h2 className="font-bold text-xl">AI Recommendation</h2>
+            <FaRobot className="text-green-700 text-3xl" />
+            <h2 className="font-bold text-xl">
+              AI Recommendation
+            </h2>
           </div>
 
           <div className="text-lg font-medium text-green-700">
@@ -158,11 +192,14 @@ function Dashboard() {
           </div>
 
           <div className="font-bold text-red-600">
-            Skip irrigation today to save water.
+            Skip irrigation today to conserve water.
           </div>
         </div>
 
       </div>
+
+      <DashboardCharts dashboard={dashboard} />
+
     </div>
   );
 }
