@@ -55,6 +55,9 @@ const farmRoutes = require("./routes/farmRoutes");
 const reminderRoutes = require("./routes/reminderRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const weatherRoutes = require("./routes/weatherRoutes");
+const recommendationRoutes = require("./routes/recommendationRoutes");
+const reportRoutes = require("./routes/reportRoutes");
+const harvestRoutes = require("./routes/harvestRoutes");
 
 // --------------------
 // Home Route
@@ -75,7 +78,9 @@ app.use("/api/farms", farmRoutes);
 app.use("/api/reminders", reminderRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/weather", weatherRoutes);
-
+app.use("/api/recommendation", recommendationRoutes);
+app.use("/api/report", reportRoutes);
+app.use("/api/harvest", harvestRoutes);
 // --------------------
 // 404 Handler
 // --------------------

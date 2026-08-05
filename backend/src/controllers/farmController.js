@@ -5,12 +5,22 @@ const Farm = require("../models/farm");
 // ==============================
 const createFarm = async (req, res, next) => {
     try {
-        const { name, location, size } = req.body;
+        const {
+            farmName,
+            location,
+            area,
+            soilType,
+            latitude,
+            longitude,
+        } = req.body;
 
         const farm = await Farm.create({
-            name,
+            farmName,
             location,
-            size,
+            area,
+            soilType,
+            latitude,
+            longitude,
             user: req.user.id,
         });
 
@@ -38,7 +48,7 @@ const getAllFarms = async (req, res, next) => {
 
         const query = {
             user: req.user.id,
-            name: {
+            farmName: {
                 $regex: search,
                 $options: "i",
             },

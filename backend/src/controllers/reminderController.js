@@ -5,13 +5,18 @@ const Reminder = require("../models/reminder");
 // ==============================
 const createReminder = async (req, res, next) => {
     try {
-        const { title, description, date, type } = req.body;
+        const {
+            title,
+            description,
+            reminderDate,
+            crop,
+        } = req.body;
 
         const reminder = await Reminder.create({
             title,
             description,
-            date,
-            type,
+            reminderDate,
+            crop,
             user: req.user.id,
         });
 
@@ -48,7 +53,7 @@ const getAllReminders = async (req, res, next) => {
         const total = await Reminder.countDocuments(query);
 
         const reminders = await Reminder.find(query)
-            .sort({ date: 1 })
+            .sort({ reminderDate: 1 })
             .skip(skip)
             .limit(limit);
 
